@@ -1,0 +1,11 @@
+sudo: required
+
+services:
+  - docker
+
+script:
+# base64 encoded config.json for activating experimental feature to get around json in json format problems
+  - mkdir -p ~/.docker; echo eyJleHBlcmltZW50YWwiOiJlbmFibGVkIn0K | base64 -d > ~/.docker/config.json | ls ~/.docker
+  - sudo apt-get --yes --no-install-recommends install binfmt-support qemu-user-static docker-ce=18.06.1~ce~3-0~ubuntu
+  - echo ':arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-arm-static:' | sudo tee -a /proc/sys/fs/binfmt_misc/register
+  - ./build.sh
